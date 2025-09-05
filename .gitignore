@@ -1,4 +1,5 @@
 **/.env
+**/.env.generated
 
 **/minio_data
 **/n8n_data
@@ -14,6 +15,10 @@
 **/whisper_data
 
 **/node_modules
+
+/docker-compose.yml
+/docker-compose.diff.yml
+/docker-compose.generated.yml
 
 # Bridge Config
 **/bridge.config.json
@@ -40,13 +45,27 @@
 # Nextcloud
 **/nextcloud/servername.conf
 
+# Nightlio
+**/nightlio
+
 # NTFY
 **/ntfy-config/server.yml
 **/ntfy-config/user.db
 **/mqtfy-config.yml
 
+# Playwright
+node_modules/
+/automations/playwright/test-results/
+/automations/playwright/playwright-report/
+/automations/playwright/blob-report/
+/automations/playwright/playwright/.cache/
+
+# Portainer
+**/portainer/portainer_password*
+
 # RabbitMQ
 **/ssl/ca.pem
+**/ssl/client*
 **/ssl/server_cert.pem
 **/ssl/server_key.pem
 **/rabbitMQ/defs.json

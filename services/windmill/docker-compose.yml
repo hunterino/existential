@@ -1,11 +1,3 @@
-
-x-logging: &default-logging
-  driver: "json-file"
-  options:
-    max-size: "${LOG_MAX_SIZE:-20m}"
-    max-file: "${LOG_MAX_FILE:-10}"
-    compress: "true"
-
 services:
   windmill_pg:
     container_name: windmill_pg
@@ -27,7 +19,12 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    logging: *default-logging
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "${LOG_MAX_SIZE:-20m}"
+        max-file: "${LOG_MAX_FILE:-10}"
+        compress: "true"
 
   windmill_server:
     container_name: windmill_server
@@ -38,9 +35,9 @@ services:
     pull_policy: always
     deploy:
       replicas: 1
-    ports: 
-      - 8800:8000
-      - 2525:2525
+    ports:
+      - 48008:8000
+      - 42525:2525
     environment:
       - DATABASE_URL=${WINDMILL_DATABASE_URL}
       - MODE=server
@@ -50,33 +47,12 @@ services:
         condition: service_healthy
     volumes:
       - worker_logs:/tmp/windmill/logs
-    logging: *default-logging
-
-  windmill_admin_init:
-    container_name: windmill_admin_init
-    image: node:24-alpine
-    restart: "no"
-    networks:
-      - exist
-    depends_on:
-      windmill_server:
-        condition: service_started
-    environment:
-      WINDMILL_ADMIN_EMAIL: ${WINDMILL_ADMIN_EMAIL}
-      WINDMILL_ADMIN_PASSWORD: ${WINDMILL_ADMIN_PASSWORD}
-      WINDMILL_SUPERADMIN_SECRET: ${WINDMILL_SUPERADMIN_SECRET}
-    entrypoint: >
-      sh -c '
-        echo "Installing Windmill CLI (npm)...";
-        npm install -g windmill-cli@latest;
-        echo "Waiting for Windmill...";
-        sleep 15;
-        echo "Creating new superadmin...";
-        wmill user add ${WINDMILL_ADMIN_EMAIL} ${WINDMILL_ADMIN_PASSWORD} --superadmin --base-url http://windmill_server:8000 --workspace default --token ${WINDMILL_SUPERADMIN_SECRET};
-        echo "Deleting default admin...";
-        wmill user remove admin@windmill.dev --base-url http://windmill_server:8000 --workspace default --token ${WINDMILL_SUPERADMIN_SECRET};
-        echo "✅ Superadmin migration complete.";
-      '
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "${LOG_MAX_SIZE:-20m}"
+        max-file: "${LOG_MAX_FILE:-10}"
+        compress: "true"
 
   windmill_worker:
     image: ${WINDMILL_IMAGE}
@@ -102,9 +78,14 @@ services:
     volumes:
       # mount the docker socket to allow to run docker containers from within the workers
       - /var/run/docker.sock:/var/run/docker.sock
-      - worker_dependency_cache:/tmp/windmill/cache
+      - /tmp/windmill/cache
       - worker_logs:/tmp/windmill/logs
-    logging: *default-logging
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "${LOG_MAX_SIZE:-20m}"
+        max-file: "${LOG_MAX_FILE:-10}"
+        compress: "true"
 
   ## This worker is specialized for "native" jobs. Native jobs run in-process and thus are much more lightweight than other jobs
   windmill_worker_native:
@@ -132,7 +113,12 @@ services:
         condition: service_healthy
     volumes:
       - worker_logs:/tmp/windmill/logs
-    logging: *default-logging
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "${LOG_MAX_SIZE:-20m}"
+        max-file: "${LOG_MAX_FILE:-10}"
+        compress: "true"
   # This worker is specialized for reports or scraping jobs. It is assigned the "reports" worker group which has an init script that installs chromium and can be targeted by using the "chromium" worker tag.
   # windmill_worker_reports:
   #   image: ${WINDMILL_IMAGE}
@@ -166,14 +152,19 @@ services:
       - exist
     pull_policy: always
     restart: unless-stopped
-    # ports: 
+    # ports:
     #   - 3301:3001
     volumes:
       - lsp_cache:/pyls/.cache
-    logging: *default-logging
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "${LOG_MAX_SIZE:-20m}"
+        max-file: "${LOG_MAX_FILE:-10}"
+        compress: "true"
 
 volumes:
-  windmill_db_data: # windmill_db_data dataset will need to be created in TrueNAS
+  windmill_db_data:
     driver: local
     driver_opts:
       type: "nfs"

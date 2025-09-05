@@ -1,7 +1,17 @@
 # Existential
-Personal knowledge mangement meets AI automation. Existential is a currated homelab with AI tools, workflow automation, note-taking, file management, and various productivity applications. Ensuring use of only free open source software that can be used commercially (in case a project takes off). Combining all of the best existing solutions into an app who's single purpose is to serve the individual.
 
-### Dashboard (courtesy of [dashy](https://opensource.org/license/mit))
+Personal productivity suite targeting self-actualization. Remember everything, plan anything, empathize with yourself, simplify and automate tasks. The core of Existential is the individual. A collection of free open source software for AI tools, workflow automation, note-taking, file management, and various productivity applications, all of which can be used commercially, in case you want to run a business.
+
+## 🚀 Quick Start
+
+Get your entire Existential environment configured in one command:
+
+```bash
+./existential.sh
+```
+
+## 📊 Dashboard
+### (courtesy of [dashy](https://opensource.org/license/mit))
 ![Dashy](./services/dashy/dashy.png)
 
 ## Examples
@@ -28,6 +38,7 @@ Personal knowledge mangement meets AI automation. Existential is a currated home
 
 ### Note taking [alts](./graveyard/notes.md)
 - [Logseq](./services/logseq/README.md)
+- Nightlio https://github.com/shirsakm/nightlio (TBD)
 
 ### Recipe management
 - [Mealie](./services/mealie/README.md)
@@ -61,25 +72,27 @@ Personal knowledge mangement meets AI automation. Existential is a currated home
 ![Architecture Diagram](architecture.png)
 
 ## Getting started
-### Hosting
-Self [hosting](/hosting/README.md).
-
-#### Prerequisites
-##### Docker
+### Pre-requisite: Docker
 https://www.docker.com/
 
-##### An S3 compatible API like MinIO for file triggers
-See [/hosting/README.md](/hosting/README.md)
+### Networking
+Existential automatically creates a Docker overlay network called `exist` with the following features:
+- **Overlay driver**: Enables multi-host communication (Docker Swarm compatible)
+- **Attachable**: Allows standalone containers to join the network
+- **Encrypted**: IP-sec encryption between nodes for secure communication
 
-#### Setup
-- Copy .example files and fill in your values eg: `cp .env.example .env`
-- Setup the docker network
-- `docker network create exist --subnet=172.18.0.0/24`
+The network is automatically created when you run `docker compose up` - no manual network creation required!
 
-#### Run
-- `docker-compose up -d` in each service directory you want to run.
-OR
-- Coming soon `./deployStack.sh` to deploy each service marked in main .env
+Individual services communicate with each other using container names (e.g., `librechat-api` can reach `librechat-mongodb:27017`).
+
+### Run
+- Run `./existential.sh`
+- Follow the steps to configure defaults (see [dynamic variables](./automations/existential/README.md#dynamic-variables))
+- See [Hosting](/hosting/README.md#enabledisable-services) to enable/disable services
+- `docker compose up` to run all configured services
+
+### Learn
+[Hosting](/hosting/README.md)
 
 ## Third-Party Software
 

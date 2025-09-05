@@ -5,12 +5,13 @@ services:
     restart: unless-stopped
     networks:
       exist:
-        # ipv4_address: 172.18.0.5 # Verify by running `docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' caddy`
+        # ipv4_address: 10.0.0.5 # Verify by running `docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' caddy`
     ports:
-      - "80:80" # The HTTP port
-      - "443:443" # The HTTPS port
+      - "80:80" # Standard HTTP port for local development
+      - "443:443" # Standard HTTPS port for local development
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./error.html:/var/www/html/error.html:ro
       - caddy_data:/data
       - caddy_config:/config
       - ../cloudflare/:/etc/caddy/certs/
